@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t opplieam/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true opplieam/react-test npm test
+
+after_sucess:
+  - docker build -t opplieam/multi-client ./client
+  - docker build -t opplieam/multi-nginx ./nginx
+  - docker build -t opplieam/multi-server ./server
+  - docker build -t opplieam/multi-worker ./worker
+  # login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push to docker hub
+  - docker push opplieam/multi-client
+  - docker push opplieam/multi-nginx
+  - docker push opplieam/multi-server
+  - docker push opplieam/multi-worker
