@@ -8,7 +8,7 @@ before_install:
 script:
   - docker run -e CI=true opplieam/react-test npm test
 
-after_sucess:
+after_success:
   - docker build -t opplieam/multi-client ./client
   - docker build -t opplieam/multi-nginx ./nginx
   - docker build -t opplieam/multi-server ./server
